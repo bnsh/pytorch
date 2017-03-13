@@ -127,7 +127,7 @@ def main():
 			best_loss = loss.data[0]
 		epoch += 1
 		if epoch % 1024 == 0:
-			print(epoch, loss)
+			print(epoch, loss.data[0])
 			print(output)
 		loss.backward()
 		optimizer.step()
