@@ -107,7 +107,7 @@ def main():
 
 		def forward(self, inp):
 			z = self.middle(inp)
-			mid = rrelu(debug=False)(z)
+			mid = rrelu()(z)
 			out = F.sigmoid(self.top(mid))
 			return out
 
