@@ -123,8 +123,8 @@ def main():
 		optimizer.zero_grad()
 		output = xor.forward(data)
 		loss = criterion(output, target)
-		if best_loss is None or best_loss > loss:
-			best_loss = loss
+		if best_loss is None or best_loss > loss.data[0]:
+			best_loss = loss.data[0]
 		epoch += 1
 		if epoch % 1024 == 0:
 			print(epoch, loss)
