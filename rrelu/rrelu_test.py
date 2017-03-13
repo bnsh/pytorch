@@ -19,7 +19,7 @@ def test(mm, direction, inp_or_grad, label, expect, train):
 	if expect(rv):
 		sys.stderr.write("pass: %s\n" % (label))
 	else:
-		print rv
+		print(rv)
 		sys.stderr.write("fail: %s\n" % (label))
 
 def close_to(v, epsilon):
@@ -56,6 +56,7 @@ def uniform_checker(l, u):
 	return func
 
 def main():
+	torch.manual_seed(12345)
 	sz = 1000
 	epsilon = 1e-5
 	mm = rrelu()
@@ -117,14 +118,17 @@ def main():
 	optimizer = optim.Adam(xor.parameters(), lr=0.001)
 	criterion = nn.BCELoss()
 	epoch = 0
-	while True:
+	best_loss = None
+	while best_loss is None or best_loss > 1e-5:
 		optimizer.zero_grad()
 		output = xor.forward(data)
 		loss = criterion(output, target)
+		if best_loss is None or best_loss > loss:
+			best_loss = loss
 		epoch += 1
 		if epoch % 1024 == 0:
 			print(epoch, loss)
-			print output
+			print(output)
 		loss.backward()
 		optimizer.step()
 		
