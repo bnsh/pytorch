@@ -65,7 +65,7 @@ def main():
 		while best_loss is None or best_loss > 1e-5:
 			optimizer.zero_grad()
 			np_data, np_targets = generate_data(batch_sz, sequence_sz)
-			output = parity.forward(np_data)
+			output = parity(np_data)
 			accuracy = ((output>0.5) == (np_targets>0.5)).float().mean()
 			loss = criterion(output, np_targets)
 			if best_loss is None or best_loss > loss.data[0]:
