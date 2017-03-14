@@ -13,7 +13,7 @@ from torch.autograd import Variable
 rnnwidth = 2
 rnnlayers = 1
 batch_sz = 1024
-sequence_sz = 3
+sequence_sz = 8
 lr=0.0002
 
 class Parity(nn.Module):
