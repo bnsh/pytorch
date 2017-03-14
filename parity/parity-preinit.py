@@ -6,6 +6,7 @@ import random
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
@@ -14,7 +15,7 @@ rnnwidth = 2
 rnnlayers = 1
 batch_sz = 1024
 sequence_sz = 8
-lr=0.0002
+lr=0.002
 
 class Parity(nn.Module):
 	def __init__(self, middlesz, layers, preinitialize=True):
@@ -22,7 +23,6 @@ class Parity(nn.Module):
 		self.middlesz = middlesz
 		self.layers = layers
 		self.middle = nn.RNN(1,self.middlesz,self.layers)
-
 		self.top = nn.Linear(self.middlesz, 1)
 		if preinitialize:
 # Is there a better way to preinitialize a weight matrix?
