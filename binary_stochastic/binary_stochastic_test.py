@@ -49,14 +49,14 @@ def main():
 
 	# Now, let's train a neural network to encode 4 bits.
 
-	class FourBits(nn.Module):
-		def __init__(self, preinitialize=False):
-			super(FourBits, self).__init__()
+	class BitEncoder(nn.Module):
+		def __init__(self, bits=4, preinitialize=False):
+			super(BitEncoder, self).__init__()
 			# We'll pass in a one hot vector of size 16.
-			self.fc1 = nn.Linear(16, 6)
-			self.fc2 = nn.Linear(6, 16)
+			self.fc1 = nn.Linear(16, bits)
+			self.fc2 = nn.Linear(bits, 16)
 
-			if preinitialize:
+			if bits == 4 and preinitialize:
 				self.fc1.bias.data.copy_(torch.Tensor(np.array([ -10,-10,-10,-10 ])))
 				self.fc1.weight.data.copy_(torch.Tensor(np.array([
 					[-10,-10,-10,-10,-10,-10,-10,-10, 20, 20, 20, 20, 20, 20, 20, 20],
@@ -95,25 +95,25 @@ def main():
 
 	validation_input = Variable(torch.Tensor(np.eye(16))).cuda()
 	# Now, we should just be able to pass in random one hot vectors.
-	fourbits = FourBits().cuda()
-	optimizer = optim.Adam(fourbits.parameters(), lr=0.001)
+	bitencoder = BitEncoder(bits=6).cuda()
+	optimizer = optim.Adam(bitencoder.parameters(), lr=0.001)
 	criterion = nn.KLDivLoss(size_average=False)
 	epoch = 0
 	while True:
 		optimizer.zero_grad()
-		fourbits.train(True)
+		bitencoder.train(True)
 		target = np.zeros((sz,16))
 		indices = np.random.randint(0, 16, (sz))
 		target[np.arange(sz), indices] = 1
 		src = Variable(torch.Tensor(target).cuda())
-		output = fourbits(src)
+		output = bitencoder(src)
 		loss = criterion(output, src)
 		loss.backward()
 		optimizer.step()
 		epoch += 1
 		if (epoch % 128) == 0:
-			fourbits.train(False)
-			output = fourbits(validation_input)
+			bitencoder.train(False)
+			output = bitencoder(validation_input)
 			loss = criterion(output, validation_input)
 			am = np.argmax(output.data.cpu().numpy(), 0)
 			accuracy = np.mean(np.equal(am, np.arange(0,16)).astype(np.float))
