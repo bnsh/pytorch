@@ -23,7 +23,7 @@ A. The forward pass, we want to verify that the
 def test1(sz):
 	src = Variable(torch.range(0,1,0.1))
 	data = Variable(src.clone().data.resize_(1,11).repeat(sz, 1))
-	bs = binary_stochastic()
+	bs = binary_stochastic(training=True)
 	rv = bs(data)
 	bce = torch.nn.BCELoss(size_average=False)
 	return bce(torch.mean(rv, 0), src).data[0]
@@ -85,7 +85,7 @@ def main():
 				])))
 			self.encoding = None
 		def forward(self, x):
-			bs = binary_stochastic(self.training)
+			bs = binary_stochastic(training=self.training)
 			x = self.fc1(x)
 			x = F.sigmoid(x)
 			x = self.encoding = bs(x)

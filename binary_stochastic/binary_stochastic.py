@@ -16,17 +16,17 @@ from torch.autograd.function import Function
 """
 
 class binary_stochastic(Function):
-	def __init__(self, train=True):
+	def __init__(self, training):
 		super(binary_stochastic, self).__init__()
-		self.train = train
+		self.training = training
 
-	def forward(self, inp):
-		if self.train:
-			rnd = inp.clone()
+	def forward(self, input):
+		if self.training:
+			rnd = input.clone()
 			rnd.uniform_(0,1)
-			out = rnd.lt(inp).type_as(inp)
+			out = rnd.lt(input).type_as(input)
 		else:
-			out = inp.ge(0.5).type_as(inp)
+			out = input.ge(0.5).type_as(input)
 		return out
 
 	def backward(self, grad_output):
